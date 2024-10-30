@@ -94,6 +94,35 @@ void printTree(HuffmanNode* root, const string& prefix = "") {
     printTree(root->right, prefix + "  ");
 }
 
+// Recursively assign binary patterns for unique leaf values
+void assignBinaryPatternsRec(unordered_map<int, vector<int>>& patternAssignments, HuffmanNode* node, vector<int> pattern) {
+    if (node->left == nullptr && node->right == nullptr) {
+        // If is a leaf, store binary pattern for value
+        int value = node->value;
+        patternAssignments[value] = pattern;
+    } else {
+        // Append 0 for left branch
+        if (node->left != nullptr) {
+            vector<int> leftPattern = pattern;
+            leftPattern.push_back(0);
+            assignBinaryPatternsRec(patternAssignments, node->left, leftPattern);
+        }
+        // Append 1 for right branch
+        if (node->right != nullptr) {
+            vector<int> rightPattern = pattern;
+            rightPattern.push_back(1);
+            assignBinaryPatternsRec(patternAssignments, node->right, rightPattern);
+        }
+    }
+}
+
+unordered_map<int, vector<int>> assignBinaryPatterns(HuffmanNode* root) {
+    unordered_map<int, vector<int>> patternAssignments;
+    vector<int> pattern;
+    assignBinaryPatternsRec(patternAssignments, root, pattern);
+    return patternAssignments;
+}
+
 int main(int argc, const char *argv[])
 {
     string imagePath = "image.jpg";
@@ -141,7 +170,20 @@ int main(int argc, const char *argv[])
     // Build tree
     HuffmanNode* root = buildTree(frequencies);
     // printTree(root);
-    deleteTree(root);
 
+    // Assign binary patterns
+    unordered_map<int, vector<int>> patternAssignments = assignBinaryPatterns(root);
+
+    for (const pair<int, vector<int>>& assignment: patternAssignments) {
+        int value = assignment.first;
+        vector<int> pattern = assignment.second;
+        cout << value << ": {";
+        for (const int bit: pattern) {
+            cout << bit;
+        }
+        cout << "}" << endl;
+    }
+
+    deleteTree(root);
     return 0;
 }
