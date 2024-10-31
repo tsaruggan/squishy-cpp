@@ -13,7 +13,8 @@
 using namespace std;
 
 Output::Output(const string fileName) {
-    file = new ofstream(fileName, ios::binary); 
+    file = new ofstream(fileName, ios::binary);
+    bytesWritten = 0;
 }
 
 Output::~Output() {
@@ -57,4 +58,5 @@ void Output::saveByte() {
     int byte = binaryToInt(bufferVector);
     char byteChar = static_cast<char>(byte); // Interpret integer as byte
     file->put(byteChar);  // Write the byte to the file
+    bytesWritten++;
 }

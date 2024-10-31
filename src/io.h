@@ -17,6 +17,8 @@ class Output {
         Output(const string filename);
         ~Output();
 
+        int bytesWritten;
+
         void writeBits(const vector<int> bits);
         void writeBit(const int bit);
         void flush();
