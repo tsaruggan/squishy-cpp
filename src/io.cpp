@@ -5,7 +5,7 @@
 //  Created by Saruggan Thiruchelvan on 2024-10-30.
 //
 
-#include <iostream>
+#include <fstream>
 
 #include "io.h"
 #include "huffman.h"
@@ -13,12 +13,13 @@
 using namespace std;
 
 Output::Output(const string fileName) {
-    file.open(fileName);
+    file = new ofstream(fileName, ios::binary); 
 }
 
 Output::~Output() {
     flush();
-    file.close();
+    file->close();
+    delete file;
 }
 
 // Add bits to buffer; when buffer contains 8 bits, save byte
@@ -43,7 +44,7 @@ void Output::writeBit(const int bit) {
 void Output::flush() {
     if (currentIndex > 0) {
         for (int i = currentIndex; i < 8; i++) {
-            buffer[i] = 0
+            buffer[i] = 0;
         }
         saveByte();
         currentIndex = 0;
@@ -52,7 +53,8 @@ void Output::flush() {
 
 // Save byte from buffer to output file
 void Output::saveByte() {
-    int byte = binaryToInt(buffer);
-    char byteChar = static_cast<char>(byte) // Interpret integer as byte
-    file.put(byteChar);  // Write the byte to the file
+    vector<int> bufferVector(buffer, buffer + 8);
+    int byte = binaryToInt(bufferVector);
+    char byteChar = static_cast<char>(byte); // Interpret integer as byte
+    file->put(byteChar);  // Write the byte to the file
 }

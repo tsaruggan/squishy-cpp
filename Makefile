@@ -10,8 +10,8 @@ LDFLAGS = -L/usr/local/opt/openblas/lib -lopenblas \
 
 # Directories
 SRC_DIR = src
-BIN_DIR = .
-TARGET = $(BIN_DIR)/squishy
+EXE_DIR = .
+TARGET = $(EXE_DIR)/squishy
 
 # Source files
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
@@ -22,7 +22,7 @@ all: $(TARGET)
 	./$(TARGET)
 
 $(TARGET): $(OBJS)
-	mkdir -p $(BIN_DIR)
+	mkdir -p $(EXE_DIR)
 	$(CXX) $(OBJS) -o $(TARGET) $(LDFLAGS)
 
 $(SRC_DIR)/%.o: $(SRC_DIR)/%.cpp

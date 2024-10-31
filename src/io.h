@@ -8,20 +8,22 @@
 #ifndef IO_H
 #define IO_H
 
+#include <fstream>
+
 using namespace std;
 
 class Output {
     public:
-        ofstream file;
-        int buffer[8];
-
         Output(const string filename);
         ~Output();
 
         void writeBits(const vector<int> bits);
         void writeBit(const int bit);
         void flush();
+        
     private:
+        ofstream* file;
+        int buffer[8];
         int currentIndex = 0;
         void saveByte();
 };

@@ -65,9 +65,13 @@ HuffmanNode* buildTree(const vector<pair<int, int>>& frequencies) {
     return root;
 }
 
+bool HuffmanNode::isLeaf() {
+    return left == nullptr && right == nullptr;
+}
+
 // Recursively assign binary patterns for unique leaf values
 void assignBinaryPatternsRec(unordered_map<int, vector<int>>& patternAssignments, HuffmanNode* node, vector<int> pattern) {
-    if (node->left == nullptr && node->right == nullptr) {
+    if (node->isLeaf()) {
         // If is a leaf, store binary pattern for value
         int value = node->value;
         patternAssignments[value] = pattern;
@@ -96,7 +100,6 @@ unordered_map<int, vector<int>> assignBinaryPatterns(HuffmanNode* root) {
 
 // Get frequency counts of intensity values in RGB channels of image
 vector<pair<int, int>> getFrequencies(Mat image) {
-    // Get dimensions
     int width = image.cols;
     int height = image.rows;
 
@@ -123,7 +126,23 @@ vector<pair<int, int>> getFrequencies(Mat image) {
 int binaryToInt(const vector<int> binaryPattern) {
     int result = 0;
     for (int bit : binaryPattern) {
-        result = (result << 1) | bit;
+        result = (result << 1) | bit; // Shift result left by 1 bit and add the current bit
     }
     return result;
+}
+
+vector<int> intToBinary(const int num) {
+    if (num <= 1) {
+        return {num}; // Base case: return a vector containing the last bit
+    } else {
+        vector<int> result = intToBinary(num >> 1); // Recursive call on num shifted right
+        result.push_back(num & 1); // Append the least significant bit
+        return result;
+    }
+}
+
+vector<int> padBits(vector<int> binaryPattern, int finalLength) {
+    int numAdditionalBits = finalLength - binaryPattern.size();
+    binaryPattern.insert(binaryPattern.begin(), numAdditionalBits, 0);
+    return binaryPattern;
 }
