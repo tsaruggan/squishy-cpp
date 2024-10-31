@@ -38,6 +38,7 @@ int main(int argc, const char *argv[]) {
         cout << "}" << endl;
     }
 
-    deleteTree(root);
+    // Clean-up & exit
+    delete root;
     return 0;
 }

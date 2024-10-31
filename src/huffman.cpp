@@ -22,6 +22,11 @@ HuffmanNode::HuffmanNode(int count) {
     this->count = count;
 }
 
+HuffmanNode::~HuffmanNode() {
+    delete left;
+    delete right;
+}
+
 // Build a Huffman tree from frequency list
 HuffmanNode* buildTree(const vector<pair<int, int>>& frequencies) {
     // Create HuffmanNodes from frequencies
@@ -58,15 +63,6 @@ HuffmanNode* buildTree(const vector<pair<int, int>>& frequencies) {
 
     HuffmanNode* root = nodes.front();
     return root;
-}
-
-// Clean-up tree
-void deleteTree(HuffmanNode* root) {
-    if (root) {
-        deleteTree(root->left);
-        deleteTree(root->right);
-        delete root;
-    }
 }
 
 // Recursively assign binary patterns for unique leaf values
@@ -124,3 +120,10 @@ vector<pair<int, int>> getFrequencies(Mat image) {
     return frequencies;
 }
 
+int binaryToInt(const vector<int> binaryPattern) {
+    int result = 0;
+    for (int bit : binaryPattern) {
+        result = (result << 1) | bit;
+    }
+    return result;
+}

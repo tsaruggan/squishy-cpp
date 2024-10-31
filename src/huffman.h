@@ -20,11 +20,13 @@ class HuffmanNode {
 
         HuffmanNode(int value, int count);
         HuffmanNode(int count);
+        ~HuffmanNode();
 };
 
 HuffmanNode* buildTree(const vector<pair<int, int>>& frequencies);
-void deleteTree(HuffmanNode* root);
 unordered_map<int, vector<int>> assignBinaryPatterns(HuffmanNode* root);
 vector<pair<int, int>> getFrequencies(Mat image);
+
+int binaryToInt(const vector<int> binaryPattern);
 
 #endif
