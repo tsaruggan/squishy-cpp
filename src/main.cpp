@@ -62,7 +62,7 @@ void compress(const string inputImageFileName, const string outputBinaryFileName
     int sizeRaw = rawSize(width, height);
     cout << "Raw size: " << sizeRaw << " bytes" << endl;
 
-    //// Processing image data
+    // Processing image data
     cout << "Processing image..." << endl;
     // Get frequency counts
     vector<pair<int, int>> frequencies = getFrequencies(image); 
@@ -75,7 +75,7 @@ void compress(const string inputImageFileName, const string outputBinaryFileName
     int sizeCompressed = compressedSize(frequencies, patternAssignments);
     cout << "Estimated compressed size: " << sizeCompressed << " bytes" << endl;
 
-    //// Writing compressed binary
+    // Writing compressed binary
     cout << "Writing binary..." << endl;
     // Initialize encoding objects
     Output* outputStream = new Output(outputBinaryFileName);
@@ -98,39 +98,65 @@ void compress(const string inputImageFileName, const string outputBinaryFileName
 
     // Results
     int sizeWrote = outputStream->bytesWritten;
-    cout << "Compressed to " << sizeWrote << " bytes." << endl;
+    cout << "Compressed " << sizeWrote << " bytes." << endl;
     double spaceSaving = round(100 * (1 - static_cast<double>(sizeWrote) / sizeRaw));
     cout << "Memory reduced by " << spaceSaving << "%." << endl;
 
     // Clean-up
     delete root;
     delete outputStream;
+    cout << "Done." << endl;
 }
 
 void decompress(const string inputBinaryFileName, const string outputImageFileName) {
     cout << "Decompressing " << inputBinaryFileName << " -> " << outputImageFileName << endl;
-
+    // Initialize decoding objects
     Input* inputStream = new Input(inputBinaryFileName);
     Decoder decoder = Decoder(inputStream);
 
+    // Reading compressed binary
+    cout << "Reading binary..." << endl;
+    // Decode header
     pair<int, int> dimensions = decoder.decodeHeader();
     int width = dimensions.first;
     int height = dimensions.second;
     int sizeHeader = inputStream->bytesRead;
     cout << "* Header: " << sizeHeader << " bytes" << endl;
 
+    // Decode Huffman table
     HuffmanNode* root = decoder.decodeTree();
     int sizeTree = inputStream->bytesRead - sizeHeader;
     cout << "* Tree: " << sizeTree << " bytes" << endl;
 
-    Mat image = decoder.decodePixels(width, height, root);
+    // Decode image pixel data
+    vector<Vec3b> pixels = decoder.decodePixels(width, height, root);
     int sizePixels = inputStream->bytesRead - sizeTree - sizeHeader;
     cout << "* Pixels: " << sizePixels << " bytes" << endl;
 
+     // Result
+    int sizeRead = inputStream->bytesRead;
+    cout << "Decompressed " << sizeRead << " bytes." << endl;
+    int sizeRaw = rawSize(width, height);
+    double spaceExpand = round(100 * (static_cast<double>(sizeRaw) / sizeRead - 1));
+    cout << "Memory expanded by " << spaceExpand << "%." << endl;
+    cout << "Image dimensions: " << width << " x " << height << "px" << endl;
+    cout << "Estimated raw size: " << sizeRaw << " bytes" << endl;
+    
+    // Save image to file
+    cout << "Generating image..." << endl;
+    // Create image from pixels
+    Mat image = Mat(height, width, CV_8UC3);
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            image.at<Vec3b>(y, x) = pixels[y * width + x];
+        }
+    }
     imwrite(outputImageFileName, image);
 
+    // Clean-up
     delete root;
     delete inputStream;
+    cout << "Done." << endl;
 }
 
 int main(int argc, const char *argv[]) {

@@ -33,7 +33,7 @@ class Decoder {
 
         pair<int, int> decodeHeader();
         HuffmanNode* decodeTree();
-        Mat decodePixels(int width, int height, HuffmanNode* root);
+        vector<Vec3b> decodePixels(int width, int height, HuffmanNode* root);
 
     private:
         Input* inputStream;

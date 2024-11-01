@@ -73,6 +73,7 @@ Decoder::Decoder(Input* inputStream) {
     this->inputStream = inputStream;
 }
 
+// Decode image width and height
 pair<int, int> Decoder::decodeHeader() {
     vector<int> widthBits = inputStream->readBits(16);
     int width = binaryToInt(widthBits);
@@ -85,6 +86,7 @@ pair<int, int> Decoder::decodeHeader() {
     return {width, height};
 }
 
+// (Recursively) Decode binary and reconstruct tree nodes
 HuffmanNode* Decoder::decodeTreeRec() {
     int flag = inputStream->readBit();
     if (flag == 1) {
@@ -106,7 +108,8 @@ HuffmanNode* Decoder::decodeTree() {
     return root;
 }
 
-Mat Decoder::decodePixels(int width, int height, HuffmanNode* root) {
+// Retrieve stored pixel channel intensity values
+vector<Vec3b> Decoder::decodePixels(int width, int height, HuffmanNode* root) {
     // Construct pixels from decoded channel intensity values
     vector<Vec3b> pixels;
     for (int i = 0; i < width * height; i++) {
@@ -117,17 +120,10 @@ Mat Decoder::decodePixels(int width, int height, HuffmanNode* root) {
         pixels.push_back(pixel);
     }
     inputStream->flush();
-
-    // Create image from pixels
-    Mat image = Mat(height, width, CV_8UC3);
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            image.at<Vec3b>(y, x) = pixels[y * width + x];
-        }
-    }
-    return image.clone();
+    return pixels;
 }
 
+// Helper function that traverses Huffman table to find channel value based on bits read
 int Decoder::decodeValue(HuffmanNode* root) {
     int bit = inputStream->readBit();
 

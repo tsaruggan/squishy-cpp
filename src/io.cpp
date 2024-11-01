@@ -41,6 +41,15 @@ void Output::writeBit(const int bit) {
     writeBits(bits);
 }
 
+// Save byte from buffer to output file
+void Output::saveByte() {
+    vector<int> bufferVector(buffer, buffer + 8);
+    int byte = binaryToInt(bufferVector);
+    char byteChar = static_cast<char>(byte); // Interpret integer as byte
+    file->put(byteChar);  // Write the byte to the file
+    bytesWritten++;
+}
+
 // Add trailing zeros to complete a byte and write it
 void Output::flush() {
     if (currentIndex > 0) {
@@ -50,15 +59,6 @@ void Output::flush() {
         saveByte();
         currentIndex = 0;
     }
-}
-
-// Save byte from buffer to output file
-void Output::saveByte() {
-    vector<int> bufferVector(buffer, buffer + 8);
-    int byte = binaryToInt(bufferVector);
-    char byteChar = static_cast<char>(byte); // Interpret integer as byte
-    file->put(byteChar);  // Write the byte to the file
-    bytesWritten++;
 }
 
 Input::Input(const string fileName) {
@@ -71,27 +71,7 @@ Input::~Input() {
     delete file;
 }
 
-// Load byte from input file
-void Input::loadByte() {
-    char byteChar;
-    file->get(byteChar);
-    int byte = static_cast<unsigned char>(byteChar);  // Interpret byte as integer
-
-    // Pad bits
-    vector<int> bits = intToBinary(byte);
-    vector<int> paddedBits = padBits(bits, 8);
-
-    // Store the bits in the buffer
-    for (int i = 0; i < 8; i++) {
-        buffer[i] = paddedBits[i];
-    }
-    bytesRead++;
-}
-
-void Input::flush() {
-    currentIndex = 0;
-}
-
+// Read bits from buffer; when end of 8-bit buffer is reached, load byte
 vector<int> Input::readBits(const int num) {
     vector<int> bits;
     while (bits.size() < num) {
@@ -108,7 +88,30 @@ vector<int> Input::readBits(const int num) {
     return bits;
 }
 
+// Read a single bit
 int Input::readBit() {
     vector<int> bits = readBits(1);
     return bits[0];
+}
+
+// Load byte from input file to buffer
+void Input::loadByte() {
+    char byteChar;
+    file->get(byteChar);
+    int byte = static_cast<unsigned char>(byteChar);  // Interpret byte as integer
+
+    // Pad bits
+    vector<int> bits = intToBinary(byte);
+    vector<int> paddedBits = padBits(bits, 8);
+
+    // Store the bits in the buffer
+    for (int i = 0; i < 8; i++) {
+        buffer[i] = paddedBits[i];
+    }
+    bytesRead++;
+}
+
+// Reset buffer (assuming just zeros in there)
+void Input::flush() {
+    currentIndex = 0;
 }
