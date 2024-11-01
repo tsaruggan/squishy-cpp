@@ -22,6 +22,11 @@ HuffmanNode::HuffmanNode(int count) {
     this->count = count;
 }
 
+HuffmanNode::HuffmanNode(HuffmanNode* left, HuffmanNode* right) {
+    this->left = left;
+    this->right = right;
+}
+
 HuffmanNode::~HuffmanNode() {
     delete left;
     delete right;

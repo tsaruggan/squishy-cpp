@@ -73,7 +73,7 @@ void compress(const string inputImageFileName, const string outputBinaryFileName
 
     // Calculate compressed size
     int sizeCompressed = compressedSize(frequencies, patternAssignments);
-    cout << "Compressed size: " << sizeCompressed << " bytes" << endl;
+    cout << "Estimated compressed size: " << sizeCompressed << " bytes" << endl;
 
     //// Writing compressed binary
     cout << "Writing binary..." << endl;
@@ -82,7 +82,7 @@ void compress(const string inputImageFileName, const string outputBinaryFileName
     Encoder encoder = Encoder(outputStream);
 
     // Encode header
-    encoder.encodeHeader(image);
+    encoder.encodeHeader(width, height);
     int sizeHeader = outputStream->bytesWritten;
     cout << "* Header: " << sizeHeader << " bytes" << endl;
 
@@ -107,8 +107,35 @@ void compress(const string inputImageFileName, const string outputBinaryFileName
     delete outputStream;
 }
 
+void decompress(const string inputBinaryFileName, const string outputImageFileName) {
+    cout << "Decompressing " << inputBinaryFileName << " -> " << outputImageFileName << endl;
+
+    Input* inputStream = new Input(inputBinaryFileName);
+    Decoder decoder = Decoder(inputStream);
+
+    pair<int, int> dimensions = decoder.decodeHeader();
+    int width = dimensions.first;
+    int height = dimensions.second;
+    int sizeHeader = inputStream->bytesRead;
+    cout << "* Header: " << sizeHeader << " bytes" << endl;
+
+    HuffmanNode* root = decoder.decodeTree();
+    int sizeTree = inputStream->bytesRead - sizeHeader;
+    cout << "* Tree: " << sizeTree << " bytes" << endl;
+
+    Mat image = decoder.decodePixels(width, height, root);
+    int sizePixels = inputStream->bytesRead - sizeTree - sizeHeader;
+    cout << "* Pixels: " << sizePixels << " bytes" << endl;
+
+    imwrite(outputImageFileName, image);
+
+    delete root;
+    delete inputStream;
+}
+
 int main(int argc, const char *argv[]) {
-    compress("curry.jpg","output.bin");
+    compress("./samples/octopus.png","./samples/output.bin");
+    decompress("./samples/output.bin", "./samples/output.png");
     
     return 0;
 }

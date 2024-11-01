@@ -60,3 +60,55 @@ void Output::saveByte() {
     file->put(byteChar);  // Write the byte to the file
     bytesWritten++;
 }
+
+Input::Input(const string fileName) {
+    file = new ifstream(fileName, ios::binary);
+    bytesRead = 0;
+}
+
+Input::~Input() {
+    file->close();
+    delete file;
+}
+
+// Load byte from input file
+void Input::loadByte() {
+    char byteChar;
+    file->get(byteChar);
+    int byte = static_cast<unsigned char>(byteChar);  // Interpret byte as integer
+
+    // Pad bits
+    vector<int> bits = intToBinary(byte);
+    vector<int> paddedBits = padBits(bits, 8);
+
+    // Store the bits in the buffer
+    for (int i = 0; i < 8; i++) {
+        buffer[i] = paddedBits[i];
+    }
+    bytesRead++;
+}
+
+void Input::flush() {
+    currentIndex = 0;
+}
+
+vector<int> Input::readBits(const int num) {
+    vector<int> bits;
+    while (bits.size() < num) {
+        if (currentIndex == 0) {
+            loadByte();
+        }
+
+        bits.push_back(buffer[currentIndex++]);
+        
+        if (currentIndex == 8) {
+            currentIndex = 0;
+        }
+    }
+    return bits;
+}
+
+int Input::readBit() {
+    vector<int> bits = readBits(1);
+    return bits[0];
+}

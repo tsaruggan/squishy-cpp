@@ -21,6 +21,7 @@ class HuffmanNode {
 
         HuffmanNode(int value, int count);
         HuffmanNode(int count);
+        HuffmanNode(HuffmanNode* left, HuffmanNode* right);
         ~HuffmanNode();
 
         bool isLeaf();

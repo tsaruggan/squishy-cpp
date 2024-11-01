@@ -18,13 +18,27 @@ class Encoder {
     public:
         Encoder(Output* outputStream);
 
-        void encodeHeader(Mat image);
+        void encodeHeader(int width, int height);
         void encodeTree(HuffmanNode* root);
         void encodePixels(Mat image, unordered_map<int, vector<int>> binaryPatternAssignments);
 
     private:
         Output* outputStream;
         void encodeTreeRec(HuffmanNode* node);
+};
+
+class Decoder {
+    public:
+        Decoder(Input* inputStream);
+
+        pair<int, int> decodeHeader();
+        HuffmanNode* decodeTree();
+        Mat decodePixels(int width, int height, HuffmanNode* root);
+
+    private:
+        Input* inputStream;
+        HuffmanNode* decodeTreeRec();
+        int decodeValue(HuffmanNode* node);
 };
 
 #endif
