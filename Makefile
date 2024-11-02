@@ -19,7 +19,6 @@ OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(SRC_DIR)/%.o)
 
 # Default target
 all: $(TARGET)
-	./$(TARGET)
 
 $(TARGET): $(OBJS)
 	mkdir -p $(EXE_DIR)

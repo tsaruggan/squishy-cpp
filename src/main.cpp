@@ -160,8 +160,25 @@ void decompress(const string inputBinaryFileName, const string outputImageFileNa
 }
 
 int main(int argc, const char *argv[]) {
-    compress("./samples/octopus.png","./samples/output.bin");
-    decompress("./samples/output.bin", "./samples/output.png");
-    
-    return 0;
+    if (argc < 4) {
+        cout << "Error: Insufficient arguments." << endl;
+    } else {
+        string operation = argv[1];
+        if (operation == "compress") {
+            compress(argv[2], argv[3]);
+            return 0;
+        } else if (operation == "decompress") {
+            decompress(argv[2], argv[3]);
+            return 0;
+        } else {
+            cout << "Error: Invalid operation '" << operation << "'." << endl;
+        }
+    }
+
+    // Display usage instructions if the argument count is too low or operation is invalid
+    cout << "Usage:" << endl;
+    cout << "  To squish:   ./squishy compress <inputImageFile.png> <outputBinaryFile.bin>" << endl;
+    cout << "  To unsquish: ./squishy decompress <inputBinaryFile.bin> <outputImageFile.png>" << endl;
+    return 1;
 }
+
