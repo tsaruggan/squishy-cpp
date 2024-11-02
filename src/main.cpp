@@ -43,7 +43,7 @@ int compressedSize(vector<pair<int, int>> frequencies, unordered_map<int, vector
         pixelsSize += 8 - (pixelsSize % 8);
     } 
 
-    int numBytes = (headerSize + pixelsSize) / 8; // convert bits to bytes
+    int numBytes = (headerSize + treeSize + pixelsSize) / 8; // convert bits to bytes
     return numBytes;
 }
 
@@ -73,7 +73,7 @@ void compress(const string inputImageFileName, const string outputBinaryFileName
 
     // Calculate compressed size
     int sizeCompressed = compressedSize(frequencies, patternAssignments);
-    cout << "Estimated compressed size: " << sizeCompressed << " bytes" << endl;
+    cout << "Compressed size: " << sizeCompressed << " bytes" << endl;
 
     // Writing compressed binary
     cout << "Writing binary..." << endl;
@@ -140,7 +140,7 @@ void decompress(const string inputBinaryFileName, const string outputImageFileNa
     double spaceExpand = round(100 * (static_cast<double>(sizeRaw) / sizeRead - 1));
     cout << "Memory expanded by " << spaceExpand << "%." << endl;
     cout << "Image dimensions: " << width << " x " << height << "px" << endl;
-    cout << "Estimated raw size: " << sizeRaw << " bytes" << endl;
+    cout << "Raw size: " << sizeRaw << " bytes" << endl;
     
     // Save image to file
     cout << "Generating image..." << endl;
