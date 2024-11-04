@@ -6,6 +6,7 @@
 //
 
 #include <fstream>
+#include <vector>
 
 #include "io.h"
 #include "huffman.h"

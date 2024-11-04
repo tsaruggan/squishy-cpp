@@ -9,6 +9,7 @@
 #define IO_H
 
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
