@@ -16,3 +16,5 @@ Install C++ and [OpenCV](https://opencv.org), then run `make`
 ```bash
 ./squishy decompress <inputBinaryFile.bin> <outputImageFile.png>
 ```
+### Python Speed Comparison
+![Graph comparison speeds of Squishy compression/decompression for both Python & C++ implementations.](https://raw.githubusercontent.com/tsaruggan/squishy-speed-comparison-test/refs/heads/master/squishy_speed_comparison_test.png)
